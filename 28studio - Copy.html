@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio 28 Barber Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#0a0a0a;--gold:#c9a84c;--gold-light:#e2c97e;--white:#f5f0e8;--charcoal:#1a1a1a;--gray:#2a2a2a;--text-muted:#888}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Playfair Display',serif}
+nav{position:fixed;top:0;width:100%;z-index:1000;padding:20px 5%;display:flex;align-items:center;justify-content:space-between;transition:all .4s;background:transparent}
+nav.scrolled{background:rgba(10,10,10,.97);padding:14px 5%;box-shadow:0 2px 20px rgba(0,0,0,.5)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--gold);letter-spacing:2px}
+.nav-logo span{color:var(--white)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--white);text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:1px;text-transform:uppercase;transition:color .3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s}
+.nav-links a:hover{color:var(--gold)}
+.nav-links a:hover::after{width:100%}
+.nav-links a.active{color:var(--gold)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1001}
+.hamburger span{width:25px;height:2px;background:var(--white);transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:0;left:0;width:100%;height:100vh;background:var(--black);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:30px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--white);text-decoration:none;font-size:1.5rem;font-family:'Playfair Display',serif;transition:color .3s}
+.mobile-menu a:hover{color:var(--gold)}
+#hero{height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;background:linear-gradient(135deg,#0a0a0a 0%,#1a1008 50%,#0a0a0a 100%);overflow:hidden}
+.hero-bg-pattern{position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(201,168,76,.08) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(201,168,76,.06) 0%,transparent 40%);pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:800px;padding:0 20px}
+.hero-badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;padding:8px 20px;margin-bottom:24px;opacity:0;animation:fadeUp .8s .2s forwards}
+.hero-content h1{font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:1.05;margin-bottom:20px;opacity:0;animation:fadeUp .8s .4s forwards}
+.hero-content h1 span{color:var(--gold);display:block}
+.hero-content p{font-size:1.1rem;color:#aaa;max-width:500px;margin:0 auto 36px;line-height:1.7;opacity:0;animation:fadeUp .8s .6s forwards}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .8s forwards}
+.btn-primary{background:var(--gold);color:var(--black);padding:14px 32px;border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .3s;text-decoration:none}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 8px 25px rgba(201,168,76,.3)}
+.btn-outline{background:transparent;color:var(--white);padding:14px 32px;border:1px solid rgba(255,255,255,.3);font-family:'Inter',sans-serif;font-weight:600;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .3s;text-decoration:none}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+.hero-scroll{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.5;animation:bounce 2s infinite}
+.hero-scroll span{font-size:.7rem;letter-spacing:2px;text-transform:uppercase}
+.hero-scroll::after{content:'';width:1px;height:40px;background:var(--gold)}
+#stats{background:var(--gold);padding:50px 5%}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1100px;margin:0 auto;text-align:center}
+.stat-item h3{font-size:clamp(2rem,4vw,3rem);font-weight:900;color:var(--black);font-family:'Playfair Display',serif}
+.stat-item p{font-size:.85rem;font-weight:600;color:rgba(10,10,10,.7);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+section{padding:90px 5%}
+.section-header{text-align:center;margin-bottom:60px}
+.section-tag{display:inline-block;color:var(--gold);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+.section-header h2{font-size:clamp(2rem,4vw,3rem);font-weight:700;margin-bottom:16px}
+.section-header p{color:#888;max-width:550px;margin:0 auto;line-height:1.7}
+.gold-line{width:50px;height:2px;background:var(--gold);margin:16px auto 0}
+#services{background:var(--charcoal)}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto}
+.service-card{background:var(--gray);padding:36px 28px;border:1px solid rgba(255,255,255,.05);transition:all .4s;position:relative;overflow:hidden}
+.service-card::before{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--gold);transform:scaleX(0);transition:transform .4s}
+.service-card:hover{transform:translateY(-6px);border-color:rgba(201,168,76,.2);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.service-card:hover::before{transform:scaleX(1)}
+.service-icon{font-size:2rem;margin-bottom:16px}
+.service-card h3{font-size:1.25rem;margin-bottom:10px;color:var(--white)}
+.service-card p{color:#777;font-size:.9rem;line-height:1.6;margin-bottom:20px}
+.service-price{font-size:1.5rem;font-weight:700;color:var(--gold);font-family:'Playfair Display',serif;margin-bottom:20px}
+.service-price span{font-size:.85rem;color:#666;font-family:'Inter',sans-serif}
+.btn-sm{display:inline-block;padding:10px 22px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .3s;text-decoration:none;font-family:'Inter',sans-serif;font-weight:600}
+.btn-sm:hover{background:var(--gold);color:var(--black)}
+#why{background:var(--black)}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1100px;margin:0 auto}
+.why-image{background:linear-gradient(135deg,var(--charcoal),var(--gray));height:500px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.why-image-inner{width:100%;height:100%;background:url('https://placehold.co/600x500/1a1a1a/c9a84c?text=Studio+28') center/cover;opacity:.8}
+.why-badge{position:absolute;bottom:24px;right:24px;background:var(--gold);color:var(--black);padding:16px 20px;text-align:center}
+.why-badge strong{display:block;font-size:1.8rem;font-family:'Playfair Display',serif}
+.why-badge span{font-size:.7rem;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.why-list{display:flex;flex-direction:column;gap:20px}
+.why-item{display:flex;gap:16px;align-items:flex-start}
+.why-icon{width:44px;height:44px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;margin-top:2px}
+.why-item h4{font-size:1rem;margin-bottom:4px;color:var(--white)}
+.why-item p{color:#777;font-size:.875rem;line-height:1.5}
+#gallery{background:var(--black)}
+.gallery-filters{display:flex;gap:12px;justify-content:center;margin-bottom:36px;flex-wrap:wrap}
+.filter-btn{padding:8px 22px;background:transparent;border:1px solid rgba(255,255,255,.15);color:#888;font-size:.8rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif}
+.filter-btn.active,.filter-btn:hover{border-color:var(--gold);color:var(--gold)}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:1100px;margin:0 auto}
+.gallery-item{overflow:hidden;position:relative;cursor:pointer;aspect-ratio:4/3}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.gallery-item:hover img{transform:scale(1.08)}
+.gallery-overlay{position:absolute;inset:0;background:rgba(201,168,76,.0);display:flex;align-items:center;justify-content:center;transition:all .3s}
+.gallery-item:hover .gallery-overlay{background:rgba(201,168,76,.15)}
+.gallery-overlay span{color:var(--white);font-size:2rem;opacity:0;transition:opacity .3s}
+.gallery-item:hover .gallery-overlay span{opacity:1}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:2000;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lightbox img{max-width:90vw;max-height:90vh;object-fit:contain}
+.lightbox-close{position:absolute;top:20px;right:28px;font-size:2rem;color:var(--white);cursor:pointer;background:none;border:none}
+#testimonials{background:var(--charcoal)}
+.testimonial-carousel{max-width:800px;margin:0 auto;position:relative;overflow:hidden}
+.testimonial-track{display:flex;transition:transform .5s ease}
+.testimonial-slide{min-width:100%;padding:0 20px;text-align:center}
+.stars{color:var(--gold);font-size:1.2rem;margin-bottom:20px}
+.testimonial-slide blockquote{font-family:'Playfair Display',serif;font-size:clamp(1.1rem,2.5vw,1.5rem);line-height:1.6;color:var(--white);margin-bottom:24px;font-style:italic}
+.client-info{display:flex;align-items:center;justify-content:center;gap:12px}
+.client-avatar{width:48px;height:48px;border-radius:50%;background:var(--gray);border:2px solid var(--gold);overflow:hidden}
+.client-avatar img{width:100%;height:100%;object-fit:cover}
+.client-name{font-weight:600;font-size:.9rem}
+.client-tag{color:#666;font-size:.8rem}
+.carousel-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:36px}
+.carousel-btn{width:40px;height:40px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--white);cursor:pointer;transition:all .3s;font-size:1rem}
+.carousel-btn:hover{border-color:var(--gold);color:var(--gold)}
+.dots{display:flex;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .3s;border:none}
+.dot.active{background:var(--gold);width:24px;border-radius:4px}
+#booking{background:var(--black)}
+.booking-wrap{max-width:780px;margin:0 auto;background:var(--charcoal);padding:50px;border:1px solid rgba(201,168,76,.1)}
+.booking-form{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:.8rem;letter-spacing:1px;text-transform:uppercase;color:#888;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{background:var(--gray);border:1px solid rgba(255,255,255,.08);color:var(--white);padding:14px 16px;font-family:'Inter',sans-serif;font-size:.9rem;transition:border .3s;outline:none;-webkit-appearance:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold)}
+.form-group textarea{height:100px;resize:vertical}
+.form-group select option{background:var(--gray)}
+.form-submit{grid-column:1/-1;text-align:center;margin-top:10px}
+.success-msg{display:none;background:rgba(201,168,76,.1);border:1px solid var(--gold);color:var(--gold);padding:16px;text-align:center;margin-top:20px;font-size:.9rem}
+#pricing{background:var(--charcoal)}
+.pricing-wrap{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.pricing-col h3{font-size:1rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(201,168,76,.2)}
+.pricing-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem}
+.pricing-item span:first-child{color:#bbb}
+.pricing-item span:last-child{color:var(--gold);font-weight:600}
+#faq{background:var(--black)}
+.faq-wrap{max-width:750px;margin:0 auto;display:flex;flex-direction:column;gap:2px}
+.faq-item{background:var(--charcoal);border:1px solid rgba(255,255,255,.05);overflow:hidden}
+.faq-question{width:100%;background:none;border:none;color:var(--white);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Playfair Display',serif;font-size:1rem;text-align:left;transition:color .3s}
+.faq-question:hover{color:var(--gold)}
+.faq-icon{color:var(--gold);font-size:1.2rem;transition:transform .3s;flex-shrink:0}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.faq-answer p{padding:0 24px 20px;color:#777;font-size:.9rem;line-height:1.7}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-item.open .faq-answer{max-height:200px}
+#contact{background:var(--charcoal)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;max-width:1100px;margin:0 auto;align-items:start}
+.contact-info h3{font-size:1.5rem;margin-bottom:24px;color:var(--white)}
+.contact-detail{display:flex;gap:14px;margin-bottom:20px;align-items:flex-start}
+.contact-icon{width:40px;height:40px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-detail h4{font-size:.85rem;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.contact-detail p{color:#888;font-size:.875rem;line-height:1.5}
+.hours-table{width:100%;margin-top:30px;border-collapse:collapse}
+.hours-table tr{border-bottom:1px solid rgba(255,255,255,.05)}
+.hours-table td{padding:10px 0;font-size:.875rem}
+.hours-table td:first-child{color:#888}
+.hours-table td:last-child{color:var(--white);text-align:right}
+.hours-table tr:last-child td:last-child{color:#555}
+.map-placeholder{background:var(--gray);height:350px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.05);position:relative;overflow:hidden}
+.map-placeholder::before{content:'📍 28 Mary St, Limerick';position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--black);padding:8px 16px;font-size:.8rem;font-weight:600;white-space:nowrap}
+.map-grid{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(6,1fr);width:100%;height:100%;opacity:.15}
+.map-grid div{border:1px solid var(--gold)}
+footer{background:#050505;padding:50px 5% 24px;border-top:1px solid rgba(201,168,76,.1)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:50px;max-width:1100px;margin:0 auto;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.05)}
+.footer-brand .nav-logo{font-size:1.8rem;display:block;margin-bottom:14px}
+.footer-brand p{color:#555;font-size:.875rem;line-height:1.7;max-width:280px}
+.footer-social{display:flex;gap:10px;margin-top:20px}
+.social-btn{width:36px;height:36px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#555;transition:all .3s;text-decoration:none;font-size:.85rem}
+.social-btn:hover{border-color:var(--gold);color:var(--gold)}
+.footer-col h4{font-size:.8rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul li a{color:#555;text-decoration:none;font-size:.875rem;transition:color .3s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{max-width:1100px;margin:24px auto 0;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#333}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@media(max-width:1024px){.services-grid{grid-template-columns:repeat(2,1fr)}.pricing-wrap{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}.stats-grid{grid-template-columns:repeat(2,1fr)}.services-grid,.gallery-grid{grid-template-columns:1fr}.why-grid,.contact-grid{grid-template-columns:1fr}.why-image{height:300px}.booking-form{grid-template-columns:1fr}.form-group.full{grid-column:1}.pricing-wrap{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.footer-bottom{flex-direction:column;gap:8px;text-align:center}.booking-wrap{padding:30px 20px}}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-logo">STUDIO<span>28</span></div>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#contact">Book</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#hero" onclick="closeMobile()">Home</a>
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#gallery" onclick="closeMobile()">Gallery</a>
+  <a href="#testimonials" onclick="closeMobile()">Reviews</a>
+  <a href="#booking" onclick="closeMobile()">Book</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<section id="hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Englishtown, Limerick City</div>
+    <h1>Studio<span>28</span></h1>
+    <p>Limerick's premier barber shop. Precision cuts, hot towel shaves, and expert grooming — right in the heart of the city.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Book Appointment</a>
+      <a href="#services" class="btn-outline">View Services</a>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span></div>
+</section>
+
+<div id="stats">
+  <div class="stats-grid">
+    <div class="stat-item reveal"><h3>⭐ <span class="counter" data-target="48" data-decimal="true">0</span></h3><p>Google Rating</p></div>
+    <div class="stat-item reveal"><h3><span class="counter" data-target="108">0</span>+</h3><p>Google Reviews</p></div>
+    <div class="stat-item reveal"><h3>⭐ 5.0</h3><p>Facebook Rating</p></div>
+    <div class="stat-item reveal"><h3>Free</h3><p>Parking Out Front</p></div>
+  </div>
+</div>
+
+<section id="services">
+  <div class="section-header reveal">
+    <div class="section-tag">What We Offer</div>
+    <h2>Our Services</h2>
+    <div class="gold-line"></div>
+    <p>Every service delivered with precision and care in our comfortable Limerick city shop.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-icon">✂️</div>
+      <h3>Dry Haircut</h3>
+      <p>A precision cut tailored to your face shape and personal style — no fuss, just great results.</p>
+      <div class="service-price">Ask in-store <span>/ session</span></div>
+      <a href="#contact" class="btn-sm">Book Now</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🔥</div>
+      <h3>Hot Towel Shave</h3>
+      <p>Traditional straight razor shave with hot towels and soothing aftershave treatment.</p>
+      <div class="service-price">Ask in-store <span>/ session</span></div>
+      <a href="#contact" class="btn-sm">Book Now</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🎨</div>
+      <h3>Hair Colouring</h3>
+      <p>Grey coverage, highlights, or full colour using professional-grade products.</p>
+      <div class="service-price">Ask in-store <span>/ session</span></div>
+      <a href="#contact" class="btn-sm">Book Now</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🪒</div>
+      <h3>Beard Trim & Shape</h3>
+      <p>Expert beard sculpting to keep you looking sharp and well-groomed every day.</p>
+      <div class="service-price">Ask in-store <span>/ session</span></div>
+      <a href="#contact" class="btn-sm">Book Now</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">👑</div>
+      <h3>Hair + Beard Combo</h3>
+      <p>The full package — haircut and beard trim for the complete gentleman's groom.</p>
+      <div class="service-price">Ask in-store <span>/ session</span></div>
+      <a href="#contact" class="btn-sm">Book Now</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🚗</div>
+      <h3>Free Parking</h3>
+      <p>Convenient free car parking directly in front of the shop — no stress, just show up.</p>
+      <div class="service-price">Complimentary</div>
+      <a href="#contact" class="btn-sm">Get Directions</a>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="why-grid">
+      <div class="why-image reveal">
+        <div class="why-image-inner"></div>
+        <div class="why-badge"><strong>4.8★</strong><span>Google Rated</span></div>
+      </div>
+      <div>
+        <div class="section-tag">Why Choose Us</div>
+        <h2 style="font-size:clamp(1.8rem,3.5vw,2.5rem);margin-bottom:10px">More Than Just a Haircut</h2>
+        <div class="gold-line" style="margin:0 0 30px"></div>
+        <p style="color:#777;margin-bottom:36px;line-height:1.7">At Studio 28 we believe every visit should feel like a proper experience. That's what keeps our Limerick clients coming back.</p>
+        <div class="why-list">
+          <div class="why-item reveal"><div class="why-icon">⭐</div><div><h4>4.8 Stars on Google</h4><p>Over 108 verified Google reviews from satisfied clients across Limerick and beyond.</p></div></div>
+          <div class="why-item reveal"><div class="why-icon">🚗</div><div><h4>Free Parking Out Front</h4><p>No scrambling for a space — free car parking right outside the door on Mary Street.</p></div></div>
+          <div class="why-item reveal"><div class="why-icon">📍</div><div><h4>City Centre Location</h4><p>Conveniently located at 28 Mary Street in Englishtown, right in the heart of Limerick.</p></div></div>
+          <div class="why-item reveal"><div class="why-icon">🔥</div><div><h4>Hot Towel Specialists</h4><p>Our hot towel shave is an experience in itself — a true traditional barbershop treat.</p></div></div>
+          <div class="why-item reveal"><div class="why-icon">🎨</div><div><h4>Full Colour Services</h4><p>From grey coverage to highlights, we offer professional hair colouring for every look.</p></div></div>
+          <div class="why-item reveal"><div class="why-icon">📱</div><div><h4>5-Star on Facebook</h4><p>Consistently top-rated across platforms. Our reputation speaks for itself.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<section id="testimonials">
+  <div class="section-header reveal">
+    <div class="section-tag">Client Love</div>
+    <h2>What They Say</h2>
+    <div class="gold-line"></div>
+  </div>
+  <div class="testimonial-carousel reveal">
+    <div class="testimonial-track" id="testimonialTrack">
+      <div class="testimonial-slide">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Best barber in Limerick. Always walk out feeling and looking great. Wouldn't go anywhere else."</blockquote>
+        <div class="client-info">
+          <div class="client-avatar"><img src="https://placehold.co/48x48/1a1a1a/c9a84c?text=G" alt="Google"></div>
+          <div><div class="client-name">Google Reviewer</div><div class="client-tag">Verified Google Review</div></div>
+        </div>
+      </div>
+      <div class="testimonial-slide">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Brilliant barbers and a great atmosphere. The hot towel shave is an experience you have to try. Highly recommend Studio 28."</blockquote>
+        <div class="client-info">
+          <div class="client-avatar"><img src="https://placehold.co/48x48/1a1a1a/c9a84c?text=G" alt="Google"></div>
+          <div><div class="client-name">Google Reviewer</div><div class="client-tag">Verified Google Review</div></div>
+        </div>
+      </div>
+      <div class="testimonial-slide">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Convenient location, free parking right outside, and a fantastic cut every time. Studio 28 is a cut above the rest in Limerick."</blockquote>
+        <div class="client-info">
+          <div class="client-avatar"><img src="https://placehold.co/48x48/1a1a1a/c9a84c?text=F" alt="Facebook"></div>
+          <div><div class="client-name">Facebook Reviewer</div><div class="client-tag">Verified Facebook Review</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-nav">
+      <button class="carousel-btn" id="prevBtn">←</button>
+      <div class="dots" id="dots"></div>
+      <button class="carousel-btn" id="nextBtn">→</button>
+    </div>
+  </div>
+</section>
+
+
+
+<section id="faq">
+  <div class="section-header reveal">
+    <div class="section-tag">Got Questions?</div>
+    <h2>Frequently Asked</h2>
+    <div class="gold-line"></div>
+  </div>
+  <div class="faq-wrap">
+    <div class="faq-item reveal">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>Where is Studio 28 located?</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer"><p>We're at 28 Mary Street, Englishtown, Limerick, V94 WVE8. There is free car parking directly in front of the shop — easy to find and easy to get to.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>What are your opening hours?</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer"><p>We're open Tuesday to Saturday. We close at 7pm. Check the Contact section for full hours or call us on 083 803 3422 to confirm.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>Do I need to book in advance?</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer"><p>Booking ahead is recommended, especially at busy times. You can book via this website or give us a call on 083 803 3422 to secure your slot.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>Is there parking available?</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer"><p>Yes — free car parking is available directly in front of the shop on Mary Street. No need to worry about finding a space.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>What services do you offer?</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer"><p>We offer dry haircuts, hot towel shaves, hair colouring, and beard trimming and shaping. Get in touch if you have a specific request and we'll do our best to accommodate you.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question" onclick="toggleFaq(this)"><span>What payment methods do you accept?</span><span class="faq-icon">+</span></button>
+      <div class="faq-answer"><p>We accept cash and all major credit and debit cards. Contactless payments are welcome. Give us a call if you have any questions about payment.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-header reveal">
+    <div class="section-tag">Find Us</div>
+    <h2>Contact & Hours</h2>
+    <div class="gold-line"></div>
+  </div>
+  <div class="contact-grid">
+    <div>
+      <h3>Get In Touch</h3>
+      <div class="contact-detail">
+        <div class="contact-icon">📍</div>
+        <div><h4>Address</h4><p>28 Mary Street, Englishtown<br>Limerick, V94 WVE8, Ireland</p></div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">📞</div>
+        <div><h4>Phone</h4><p>083 803 3422</p></div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">📱</div>
+        <div><h4>Facebook</h4><p>facebook.com/studio28barbershop</p></div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-icon">🚗</div>
+        <div><h4>Parking</h4><p>Free parking directly in front of the shop</p></div>
+      </div>
+      <table class="hours-table">
+        <tr><td>Monday</td><td>Closed</td></tr>
+        <tr><td>Tuesday – Friday</td><td>9:00am – 7:00pm</td></tr>
+        <tr><td>Saturday</td><td>9:00am – 6:00pm</td></tr>
+        <tr><td>Sunday</td><td>Closed</td></tr>
+      </table>
+    </div>
+    <div class="map-placeholder reveal">
+     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4177.511365307694!2d-8.624730786584708!3d52.668031271984!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x485b5df07100fab9%3A0xc588716fd1642d56!2sStudio%2028%20Barber%20Shop!5e1!3m2!1sen!2sie!4v1778251592299!5m2!1sen!2sie" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="nav-logo">STUDIO<span>28</span></span>
+      <p>Limerick's top-rated barber shop. Precision cuts, hot towel shaves, and hair colouring at 28 Mary Street, Englishtown.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="https://www.facebook.com/studio28barbershop/" target="_blank">fb</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#booking">Book Now</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#booking">Dry Haircut</a></li>
+        <li><a href="#booking">Hot Towel Shave</a></li>
+        <li><a href="#booking">Hair Colouring</a></li>
+        <li><a href="#booking">Beard Trim & Shape</a></li>
+        <li><a href="#booking">Hair + Beard Combo</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Studio 28 Barber Shop. All rights reserved.</span>
+    <span style="color:#444">28 Mary St, Englishtown, Limerick ✂️</span>
+  </div>
+</footer>
+
+<script>
+const navbar=document.getElementById('navbar');
+const navLinks=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  navbar.classList.toggle('scrolled',window.scrollY>60);
+  const sections=document.querySelectorAll('section[id]');
+  let cur='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});
+  navLinks.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur)});
+});
+const ham=document.getElementById('hamburger');
+const mobileMenu=document.getElementById('mobileMenu');
+ham.addEventListener('click',()=>mobileMenu.classList.toggle('open'));
+function closeMobile(){mobileMenu.classList.remove('open')}
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+},{threshold:.12});
+reveals.forEach(r=>obs.observe(r));
+const counters=document.querySelectorAll('.counter');
+const cObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target,target=+el.dataset.target,dec=el.dataset.decimal;
+    let start=0,dur=1800,step=target/dur*16;
+    const timer=setInterval(()=>{
+      start+=step;
+      if(start>=target){start=target;clearInterval(timer)}
+      el.textContent=dec?(start/10).toFixed(1):Math.floor(start).toLocaleString();
+    },16);
+    cObs.unobserve(el);
+  });
+},{threshold:.5});
+counters.forEach(c=>cObs.observe(c));
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    const f=this.dataset.filter;
+    document.querySelectorAll('.gallery-item').forEach(item=>{
+      item.style.opacity=(f==='all'||item.dataset.cat===f)?'1':'0.2';
+      item.style.transform=(f==='all'||item.dataset.cat===f)?'scale(1)':'scale(.95)';
+      item.style.transition='all .4s';
+    });
+  });
+});
+document.querySelectorAll('.gallery-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.getElementById('lightboxImg').src=item.querySelector('img').src;
+    document.getElementById('lightbox').classList.add('open');
+  });
+});
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open')}
+document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox()});
+const track=document.getElementById('testimonialTrack');
+const slides=track.querySelectorAll('.testimonial-slide');
+const dotsWrap=document.getElementById('dots');
+let cur=0,autoInt;
+slides.forEach((_,i)=>{
+  const d=document.createElement('button');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+function goTo(n){
+  cur=n;
+  track.style.transform=`translateX(-${cur*100}%)`;
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+}
+document.getElementById('prevBtn').onclick=()=>goTo((cur-1+slides.length)%slides.length);
+document.getElementById('nextBtn').onclick=()=>goTo((cur+1)%slides.length);
+autoInt=setInterval(()=>goTo((cur+1)%slides.length),5000);
+track.parentElement.addEventListener('mouseenter',()=>clearInterval(autoInt));
+track.parentElement.addEventListener('mouseleave',()=>autoInt=setInterval(()=>goTo((cur+1)%slides.length),5000));
+function toggleFaq(btn){
+  const item=btn.parentElement;
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+function submitForm(e){
+  e.preventDefault();
+  document.getElementById('bookingForm').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+}
+const mg=document.getElementById('mapGrid');
+for(let i=0;i<48;i++){const d=document.createElement('div');mg.appendChild(d)}
+</script>
+</body>
+</html>
